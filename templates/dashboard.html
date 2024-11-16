@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Interactive Plot</h1>
+
+    <div>
+        <label for="start-date">Start Date:</label>
+        <input type="date" id="start-date">
+        <label for="end-date">End Date:</label>
+        <input type="date" id="end-date">
+        <button id="range-button">Filter Range</button>
+        <button id="predict-button">Predict Future</button>
+    </div>
+
+    <div id="plot"></div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
