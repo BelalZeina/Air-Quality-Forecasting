@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->dateTime('from_date');
-            $table->dateTime('to_date');
             $table->foreignId('state_id')->constrained()->onDelete("cascade");
             $table->float('pm25')->nullable();
             $table->float('pm10')->nullable();

@@ -59,9 +59,9 @@
                     <div class="col-md-6 mb-2">
                         <label for="group_by" class="form-label">Group By</label>
                         <select name="group_by" id="group_by" class="form-control" onchange="this.form.submit()">
-                            <option value="days" {{ request('group_by') == 'days' ? 'selected' : '' }}>Days</option>
-                            <option value="months" {{ request('group_by') == 'months' ? 'selected' : '' }}>Months</option>
-                            <option value="years" {{ request('group_by') == 'years' ? 'selected' : '' }}>Years</option>
+                            <option value="days" {{ $group_by=='days' ? 'selected' : '' }}>Days</option>
+                            <option value="months" {{ $group_by=='months' ? 'selected' : '' }}>Months</option>
+                            <option value="years" {{ $group_by=='years' ? 'selected' : '' }}>Years</option>
                         </select>
                     </div>
 
@@ -79,34 +79,36 @@
             @else
             <div class="table-responsive text-nowrap px-4">
                 <table class="table" id="myTable">
-                <thead class="table-light">
-                    <tr>
-                        <th>Avg PM2.5</th>
-                        <th>Avg PM10</th>
-                        <th>Avg NO</th>
-                        <th>Avg NO2</th>
-                        <th>Avg SO2</th>
-                        <th>Avg CO</th>
-                        <th>Avg Temperature</th>
-                        <th>Avg CO2</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($cityStatistics as $stat)
-                    <tr>
-                        <td>{{ number_format($stat->avg_pm25, 2) }}</td>
-                        <td>{{ number_format($stat->avg_pm10, 2) }}</td>
-                        <td>{{ number_format($stat->avg_no, 2) }}</td>
-                        <td>{{ number_format($stat->avg_no2, 2) }}</td>
-                        <td>{{ number_format($stat->avg_so2, 2) }}</td>
-                        <td>{{ number_format($stat->avg_co, 2) }}</td>
-                        <td>{{ number_format($stat->avg_temp, 2) }}</td>
-                        <td>{{ number_format($stat->avg_co2, 2) }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Avg PM2.5</th>
+                            <th>Avg PM10</th>
+                            <th>Avg NO</th>
+                            <th>Avg NO2</th>
+                            <th>Avg SO2</th>
+                            <th>Avg CO</th>
+                            <th>Avg Temperature</th>
+                            <th>Avg CO2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($cityStatistics as $stat)
+                        <tr>
+                            <td>{{ $stat->group_date }}</td>
+                            <td>{{ number_format($stat->avg_pm25, 2) }}</td>
+                            <td>{{ number_format($stat->avg_pm10, 2) }}</td>
+                            <td>{{ number_format($stat->avg_no, 2) }}</td>
+                            <td>{{ number_format($stat->avg_no2, 2) }}</td>
+                            <td>{{ number_format($stat->avg_so2, 2) }}</td>
+                            <td>{{ number_format($stat->avg_co, 2) }}</td>
+                            <td>{{ number_format($stat->avg_temp, 2) }}</td>
+                            <td>{{ number_format($stat->avg_co2, 2) }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
             @endif
         </div>
     </div>
@@ -115,15 +117,16 @@
         <div class="row">
             <!-- Chart Card -->
             <div class="col-lg-9 col-md-12 mb-3">
-                <div class="card-body" style="background: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div class="card-body"
+                    style="background: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <h5 class="card-title text-primary" style="font-weight: bold;">{{ __('Air Quality Data') }}</h5>
                     <form action="{{route("dashboard2")}}">
                         <div class="col-2 mb-2">
                             <label for="group_by" class="form-label">Group By</label>
                             <select name="group_by" id="group_by" class="form-control" onchange="this.form.submit()">
-                                <option value="days" {{ request('group_by') == 'days' ? 'selected' : '' }}>Days</option>
-                                <option value="months" {{ request('group_by') == 'months' ? 'selected' : '' }}>Months</option>
-                                <option value="years" {{ request('group_by') == 'years' ? 'selected' : '' }}>Years</option>
+                                <option value="days" {{ $group_by=='days' ? 'selected' : '' }}>Days</option>
+                                <option value="months" {{ $group_by=='months' ? 'selected' : '' }}>Months</option>
+                                <option value="years" {{ $group_by=='years' ? 'selected' : '' }}>Years</option>
                             </select>
                         </div>
                     </form>
@@ -132,17 +135,41 @@
             </div>
             <!-- Map Card -->
             <div class="col-lg-3 col-md-12 mb-3">
-                <div class="card-body" style="background: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                    <iframe class="rounded-top"
-                    style="width: 100%; height: 500px; margin-bottom: -6px; border: 0;"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4606108.157943049!2d89.2242367!3d26.3498651!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x374e69d4b6c49dc1%3A0x9c25f4af0d42084a!2sAssam!5e0!3m2!1sen!2sin!4v1694259649153!5m2!1sen!2sin"
-                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <div class="card-body"
+                    style="background: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <iframe class="rounded-top" style="width: 100%; height: 500px; margin-bottom: -6px; border: 0;"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4606108.157943049!2d89.2242367!3d26.3498651!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x374e69d4b6c49dc1%3A0x9c25f4af0d42084a!2sAssam!5e0!3m2!1sen!2sin!4v1694259649153!5m2!1sen!2sin"
+                        loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-2 p-2" style=" border-radius: 10px;">
+        <div class="row">
+            <!-- Chart Card -->
+            <div class="col-12 mb-3">
+                <div class="card-body"
+                    style="background: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <h5 class="card-title text-primary" style="font-weight: bold;">{{ __('Correlation Matrix') }}</h5>
+                    <form action="{{route("dashboard2")}}">
+                        <div class="col-2 mb-2">
+                            <label for="group_by" class="form-label">Group By</label>
+                            <select name="group_by" id="group_by" class="form-control" onchange="this.form.submit()">
+                                <option value="days" {{ $group_by=='days' ? 'selected' : '' }}>Days</option>
+                                <option value="months" {{ $group_by=='months' ? 'selected' : '' }}>Months</option>
+                                <option value="years" {{ $group_by=='years' ? 'selected' : '' }}>Years</option>
+                            </select>
+                        </div>
+                    </form>
+                    <div class="text-center" id="correlation-matrix"></div>
                 </div>
             </div>
         </div>
     </div>
 
 </div>
+
 @endsection
 
 @section('scripts-dashboard')
@@ -199,7 +226,7 @@
 </script>
 
 <script>
-   document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
     // Get the grouped data
     const labels = @json($filteredData->pluck('group_date')); // X-axis labels (grouped dates)
     const datasets = [
@@ -319,4 +346,66 @@
 });
 
 </script>
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const data = @json($correlationMatrix); // Fetch correlation matrix
+        const variables = Object.keys(data);
+        const matrix = variables.map(row => variables.map(col => data[row][col]));
+
+        const margin = { top: 50, right: 20, bottom: 20, left: 50 };
+        const width = 500 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
+
+        const svg = d3.select('#correlation-matrix')
+            .append('svg')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+        const color = d3.scaleSequential(d3.interpolateRdBu).domain([-1, 1]);
+
+        const cellSize = width / variables.length;
+
+        // Draw cells
+        svg.selectAll('rect')
+            .data(matrix.flatMap((row, i) => row.map((val, j) => ({ val, row: i, col: j }))))
+            .enter().append('rect')
+            .attr('x', d => d.col * cellSize)
+            .attr('y', d => d.row * cellSize)
+            .attr('width', cellSize)
+            .attr('height', cellSize)
+            .style('fill', d => color(d.val));
+
+        // Add labels
+        svg.selectAll('.row-label')
+            .data(variables)
+            .enter().append('text')
+            .attr('x', -5)
+            .attr('y', (_, i) => i * cellSize + cellSize / 2)
+            .attr('text-anchor', 'end')
+            .text(d => d);
+
+        svg.selectAll('.col-label')
+            .data(variables)
+            .enter().append('text')
+            .attr('x', (_, i) => i * cellSize + cellSize / 2)
+            .attr('y', -5)
+            .attr('text-anchor', 'middle')
+            .text(d => d);
+
+        // Add values
+        svg.selectAll('.cell-text')
+            .data(matrix.flatMap((row, i) => row.map((val, j) => ({ val, row: i, col: j }))))
+            .enter().append('text')
+            .attr('x', d => d.col * cellSize + cellSize / 2)
+            .attr('y', d => d.row * cellSize + cellSize / 2)
+            .attr('text-anchor', 'middle')
+            .attr('dy', '.35em')
+            .style('font-size', '10px')
+            .text(d => d.val.toFixed(2));
+    });
+</script>
+
 @endsection

@@ -68,36 +68,38 @@
             @if($cityStatistics->isEmpty())
             <p class="text-center text-muted">No data available</p>
             @else
-            <table class="table table-responsive  table-hover table-bordered">
-                <thead class="table-light">
-                    <tr>
-                        <th>State</th>
-                        <th>Avg PM2.5</th>
-                        <th>Avg PM10</th>
-                        <th>Avg NO</th>
-                        <th>Avg NO2</th>
-                        <th>Avg SO2</th>
-                        <th>Avg CO</th>
-                        <th>Avg Temperature</th>
-                        <th>Avg CO2</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($cityStatistics as $stat)
-                    <tr>
-                        <td>{{ $stat->state->name ?? 'Unknown State' }}</td>
-                        <td>{{ number_format($stat->avg_pm25, 2) }}</td>
-                        <td>{{ number_format($stat->avg_pm10, 2) }}</td>
-                        <td>{{ number_format($stat->avg_no, 2) }}</td>
-                        <td>{{ number_format($stat->avg_no2, 2) }}</td>
-                        <td>{{ number_format($stat->avg_so2, 2) }}</td>
-                        <td>{{ number_format($stat->avg_co, 2) }}</td>
-                        <td>{{ number_format($stat->avg_temp, 2) }}</td>
-                        <td>{{ number_format($stat->avg_co2, 2) }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            <div class="table-responsive text-nowrap px-4">
+                <table class="table" id="myTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>State</th>
+                            <th>Avg PM2.5</th>
+                            <th>Avg PM10</th>
+                            <th>Avg NO</th>
+                            <th>Avg NO2</th>
+                            <th>Avg SO2</th>
+                            <th>Avg CO</th>
+                            <th>Avg Temperature</th>
+                            <th>Avg CO2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($cityStatistics as $stat)
+                        <tr>
+                            <td>{{ $stat->state->name ?? 'Unknown State' }}</td>
+                            <td>{{ number_format($stat->avg_pm25, 2) }}</td>
+                            <td>{{ number_format($stat->avg_pm10, 2) }}</td>
+                            <td>{{ number_format($stat->avg_no, 2) }}</td>
+                            <td>{{ number_format($stat->avg_no2, 2) }}</td>
+                            <td>{{ number_format($stat->avg_so2, 2) }}</td>
+                            <td>{{ number_format($stat->avg_co, 2) }}</td>
+                            <td>{{ number_format($stat->avg_temp, 2) }}</td>
+                            <td>{{ number_format($stat->avg_co2, 2) }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
             @endif
         </div>
     </div>
@@ -106,18 +108,19 @@
         <div class="row">
             <!-- Chart Card -->
             <div class="col-lg-9 col-md-12 mb-3">
-                <div class="card-body" style="background: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div class="card-body"
+                    style="background: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <h5 class="card-title text-primary" style="font-weight: bold;">{{ __('Air Quality Data') }}</h5>
                     <canvas id="airQualityChart"></canvas>
                 </div>
             </div>
             <!-- Map Card -->
             <div class="col-lg-3 col-md-12 mb-3">
-                <div class="card-body" style="background: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                    <iframe class="rounded-top"
-                    style="width: 100%; height: 500px; margin-bottom: -6px; border: 0;"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4606108.157943049!2d89.2242367!3d26.3498651!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x374e69d4b6c49dc1%3A0x9c25f4af0d42084a!2sAssam!5e0!3m2!1sen!2sin!4v1694259649153!5m2!1sen!2sin"
-                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <div class="card-body"
+                    style="background: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <iframe class="rounded-top" style="width: 100%; height: 500px; margin-bottom: -6px; border: 0;"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4606108.157943049!2d89.2242367!3d26.3498651!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x374e69d4b6c49dc1%3A0x9c25f4af0d42084a!2sAssam!5e0!3m2!1sen!2sin!4v1694259649153!5m2!1sen!2sin"
+                        loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
         </div>
@@ -129,6 +132,10 @@
 @endsection
 
 @section('scripts-dashboard')
+<link href="{{ asset('asset/datatables/datatables.bundle.rtl.css') }}" rel="stylesheet" type="text/css" />
+<link href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {

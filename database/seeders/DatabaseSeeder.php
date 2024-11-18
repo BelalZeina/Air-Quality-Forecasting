@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminSeeder::class,
             CitySeeder::class,
+            ArunSeeder::class,
+            ChandigarhSeeder::class,
         ]);
     }
 }
