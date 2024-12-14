@@ -27,7 +27,7 @@
     @include('layouts.dashboard.footer')
 
     <!--end::Wrapper-->
-
+    @livewireScripts
     @include('layouts.dashboard.scripts')
 
 </body>

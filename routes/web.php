@@ -49,7 +49,7 @@ Route::middleware('localization')->group(function () {
             Route::get('/',[HomeController::class,'dashboard']);
             Route::get('/dashboard',[HomeController::class,'dashboard'])->name("dashboard");
             Route::get('/dashboard2',[HomeController::class,'dashboard2'])->name("dashboard2");
-            Route::get('/arunachal_pradesh',[HomeController::class,'arunachal_pradesh'])->name("arunachal_pradesh");
+            Route::get('/forcasting',[HomeController::class,'forcasting'])->name("forcasting");
 
 
     });

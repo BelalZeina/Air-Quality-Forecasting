@@ -18,6 +18,9 @@
                 <li class="nav-item">
                     <a class="nav-link {{ isActiveRoute(['dashboard2']) }}" href="{{route("dashboard2")}}">Grouping for data</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ isActiveRoute(['forcasting']) }}" href="{{route("forcasting")}}">forcasting</a>
+                </li>
             </ul>
         </div>
     </div>

@@ -9,6 +9,7 @@ use App\Models\Crop;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Validator;
 
 
 class HomeController extends Controller
@@ -68,6 +69,62 @@ class HomeController extends Controller
             'data' => $data,
         ]);
 
+    }
+
+    public function forcasting(Request $request)
+    {
+        $validator =Validator::make( $request->all(),[
+            'feature' => 'nullable|string',
+        ]);
+        if($validator->fails()) {
+            return response()->json(["error" =>$validator->errors(),"status"=>422 ],422);
+        }
+        $validated=$request->all();
+        $validated['feature']=$validated['feature']??"pm25";
+        // Call the Python API
+        $city = City::where([
+            "name" => "Naharlagun",
+            "state_id" => "2"
+        ])
+        ->where($validated['feature'], '!=', null)
+        ->latest("from_date") // Sort by 'from_date' in descending order
+        ->take(30) // Get the last 30 records
+        ->pluck($validated['feature'], 'from_date') // Fetch the feature values along with the 'from_date'
+        ->toArray();
+
+        // Transform data to ascending order of 'from_date'
+        $data = collect($city)
+            ->sortKeys() // Sort by keys (which are 'from_date' in this case)
+            ->values() // Get only the feature values
+            ->toArray();
+            // return $data;
+        $response = \Http::post('http://127.0.0.1:5000/predict', [
+            'feature' => $validated['feature']??"pm25",
+            'data' =>$data, // Provide time-series input data
+        ]);
+        $nulls=[];
+        for ($i=0; $i <30 ; $i++) {
+            $nulls[]=null;
+        }
+        $dates =collect($city)
+        ->sortKeys() // Sort by keys (which are 'from_date' in this case)
+        ->keys() // Get only the feature values
+        ->toArray(); // Existing dates
+        $lastDate = end($dates); // Get the last date from the keys
+        if ($lastDate) {
+            $lastTimestamp = strtotime($lastDate);
+            for ($i = 1; $i <= 24; $i++) {
+                $nextTimestamp = $lastTimestamp + ($i * 3600); // Add 1 hour per iteration
+                $dates[] = date('Y-m-d H:i:s', $nextTimestamp); // Append new date in Y-m-d H:i:s format
+            }
+        }
+        $predictions=$response->object()->predictions ?? [];
+        $result = array_merge($nulls, $predictions);
+        return view('dashboard.forcasting',[
+            "dates" => $dates,
+            "actual" => $data,
+            "predictions" => $result ?? []
+        ]);
     }
 
     public function dashboard2(Request $request)
@@ -184,6 +241,53 @@ class HomeController extends Controller
         );
 
         return $denominator == 0 ? 0 : $numerator / $denominator;
+    }
+
+
+
+    public function predict(Request $request)
+    {
+        $validator =Validator::make( $request->all(),[
+            // 'feature' => 'required|string',
+        ]);
+        if($validator->fails()) {
+            return response()->json(["error" =>$validator->errors(),"status"=>422 ],422);
+        }
+        $validated=$request->all();
+        $validated['feature']="pm25";
+        // Call the Python API
+        $city = City::where([
+            "name" => "Naharlagun",
+            "state_id" => "2"
+        ])
+        ->where($validated['feature'], '!=', null)
+        ->latest("from_date") // Sort by 'from_date' in descending order
+        ->take(30) // Get the last 30 records
+        ->pluck($validated['feature'], 'from_date') // Fetch the feature values along with the 'from_date'
+        ->toArray();
+
+        // Transform data to ascending order of 'from_date'
+        $data = collect($city)
+            ->sortKeys() // Sort by keys (which are 'from_date' in this case)
+            ->values() // Get only the feature values
+            ->toArray();
+            // return $data;
+        $response = \Http::post('http://127.0.0.1:5000/predict', [
+            'feature' => $validated['feature']??"pm25",
+            'data' =>$data, // Provide time-series input data
+        ]);
+        if ($response->successful()) {
+            return response()->json([
+                "actual" => $data,
+                "predictions" => $response->object()->predictions ?? []
+            ], 200);
+        } else {
+            return response()->json([
+                "actual" => $data,
+                "predictions" => []
+            ], 200); // Ensure the front end can still render with the actual data
+        }
+
     }
 
 

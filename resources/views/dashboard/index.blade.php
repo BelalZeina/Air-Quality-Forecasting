@@ -4,7 +4,7 @@
 
 @section('main')
 <div class="container">
-    <h1 class="my-4 text-center">City Statistics Dashboard</h1>
+    <h1 class="my-4 text-center">Cities Statistics Dashboard</h1>
 
     {{-- Filters Card --}}
     <div class="card ">

@@ -1,14 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\CartController;
-use App\Http\Controllers\Api\ClubBookingController;
-use App\Http\Controllers\Api\CropController;
-use App\Http\Controllers\Api\HomeController;
-use App\Http\Controllers\Api\NoteController;
-use App\Http\Controllers\Api\OTPController;
-use App\Http\Controllers\Api\PostController;
-use App\Http\Controllers\Api\ReviewController;
+
+use App\Http\Controllers\Dashboard\HomeController;
 use App\Models\City;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -45,3 +38,6 @@ Route::middleware('lang')->group(function () {
     });
 
 });
+
+Route::post('/forecast', [HomeController::class,"predict"])->name("forecast.api");
+
